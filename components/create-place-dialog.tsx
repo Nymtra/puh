@@ -15,6 +15,8 @@ interface CreatePlaceDialogProps {
   onCreated: () => void
 }
 
+const DEFAULT_IMAGE = 'https://raw.githubusercontent.com/AAI-Associates/FileStorage/refs/heads/main/images/Bauernhof%20(1).png'
+
 export function CreatePlaceDialog({ open, onOpenChange, onCreated }: CreatePlaceDialogProps) {
   const [name, setName] = useState('')
   const [category, setCategory] = useState<Category>('sonstiges')
@@ -52,7 +54,6 @@ export function CreatePlaceDialog({ open, onOpenChange, onCreated }: CreatePlace
   const addImageUrl = () => {
     if (!newImageUrl.trim()) return
     
-    // Basic URL validation
     try {
       new URL(newImageUrl)
       setImageUrls(prev => [...prev, newImageUrl.trim()])
@@ -100,12 +101,6 @@ export function CreatePlaceDialog({ open, onOpenChange, onCreated }: CreatePlace
       return
     }
 
-    if (imageUrls.length === 0) {
-      addImageUrl('https://raw.githubusercontent.com/AAI-Associates/FileStorage/refs/heads/main/images/Bauernhof%20(1).png')
-      setError('Mindestens ein Bild-Link ist erforderlich')
-      return
-    }
-
     const lat = parseFloat(latitude)
     const lng = parseFloat(longitude)
 
@@ -128,7 +123,7 @@ export function CreatePlaceDialog({ open, onOpenChange, onCreated }: CreatePlace
           longitude: lng,
           difficulty,
           terrain,
-          images: imageUrls,
+          images: imageUrls.length > 0 ? imageUrls : [DEFAULT_IMAGE],
         }),
       })
 
@@ -147,11 +142,11 @@ export function CreatePlaceDialog({ open, onOpenChange, onCreated }: CreatePlace
   }
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % imageUrls.length)
+    setCurrentImageIndex((prev) => (prev + 1) % (imageUrls.length || 1))
   }
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + imageUrls.length) % imageUrls.length)
+    setCurrentImageIndex((prev) => (prev - 1 + (imageUrls.length || 1)) % (imageUrls.length || 1))
   }
 
   if (!open) return null
@@ -161,72 +156,58 @@ export function CreatePlaceDialog({ open, onOpenChange, onCreated }: CreatePlace
       <div className="bg-[#1a1a1f] w-full sm:max-w-lg sm:rounded-2xl shadow-2xl max-h-[90vh] overflow-hidden flex flex-col animate-in slide-in-from-bottom-4 duration-300 border border-[#2a2a35]">
         {/* Image area */}
         <div className="relative aspect-video bg-[#0f0f12] shrink-0">
-          {imageUrls.length > 0 ? (
-            <>
-              <Image
-                src={imageUrls[currentImageIndex]}
-                alt="Vorschau"
-                fill
-                className="object-cover"
-                unoptimized
-              />
-              
-              {/* Image navigation */}
-              {imageUrls.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
-                    onClick={prevImage}
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
-                  <button
-                    type="button"
-                    className="absolute right-14 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
-                    onClick={nextImage}
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                  
-                  {/* Image indicators */}
-                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-                    {imageUrls.map((_, index) => (
-                      <button
-                        key={index}
-                        type="button"
-                        className={`h-1.5 rounded-full transition-all ${
-                          index === currentImageIndex ? 'w-6 bg-emerald-500' : 'w-1.5 bg-white/40'
-                        }`}
-                        onClick={() => setCurrentImageIndex(index)}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
+          <Image
+            src={imageUrls.length > 0 ? imageUrls[currentImageIndex] : DEFAULT_IMAGE}
+            alt="Vorschau"
+            fill
+            className="object-cover"
+            unoptimized
+          />
 
-              {/* Remove current image */}
+          {imageUrls.length > 1 && (
+            <>
               <button
                 type="button"
-                className="absolute top-3 right-14 h-10 w-10 rounded-full bg-red-500/80 hover:bg-red-500 text-white flex items-center justify-center transition-colors"
-                onClick={() => removeImage(currentImageIndex)}
+                className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
+                onClick={prevImage}
               >
-                <Trash2 className="h-5 w-5" />
+                <ChevronLeft className="h-5 w-5" />
               </button>
-            </>
-          ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-gray-500">
-              <div className="h-16 w-16 rounded-full bg-[#2a2a35] flex items-center justify-center border-2 border-dashed border-gray-600">
-                <Link className="h-8 w-8" />
+              <button
+                type="button"
+                className="absolute right-14 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
+                onClick={nextImage}
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                {imageUrls.map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    className={`h-1.5 rounded-full transition-all ${
+                      index === currentImageIndex ? 'w-6 bg-emerald-500' : 'w-1.5 bg-white/40'
+                    }`}
+                    onClick={() => setCurrentImageIndex(index)}
+                  />
+                ))}
               </div>
-              <span className="text-sm">Bild-URLs hinzufügen</span>
-            </div>
+            </>
           )}
-          
-          {/* Gradient overlay */}
+
+          {imageUrls.length > 0 && (
+            <button
+              type="button"
+              className="absolute top-3 right-14 h-10 w-10 rounded-full bg-red-500/80 hover:bg-red-500 text-white flex items-center justify-center transition-colors"
+              onClick={() => removeImage(currentImageIndex)}
+            >
+              <Trash2 className="h-5 w-5" />
+            </button>
+          )}
+
           <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1f] via-transparent to-black/30 pointer-events-none" />
-          
-          {/* Close button */}
+
           <button
             type="button"
             className="absolute top-3 right-3 h-10 w-10 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
@@ -286,7 +267,7 @@ export function CreatePlaceDialog({ open, onOpenChange, onCreated }: CreatePlace
               />
             </div>
 
-            {/* Category - Native select for better mobile support */}
+            {/* Category */}
             <div className="space-y-2">
               <Label className="text-sm font-medium text-gray-400">Kategorie</Label>
               <select
@@ -334,7 +315,7 @@ export function CreatePlaceDialog({ open, onOpenChange, onCreated }: CreatePlace
               </div>
             </div>
 
-            {/* Difficulty and Terrain - Native selects */}
+            {/* Difficulty & Terrain */}
             <div className="flex gap-3">
               <div className="flex-1 space-y-2">
                 <Label className="text-sm font-medium text-gray-400">Schwierigkeit</Label>
@@ -344,9 +325,7 @@ export function CreatePlaceDialog({ open, onOpenChange, onCreated }: CreatePlace
                   className="w-full h-11 px-3 rounded-md bg-[#252530] border border-[#3a3a45] text-white focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 >
                   {Object.entries(difficultyLabels).map(([value, label]) => (
-                    <option key={value} value={value} className="bg-[#252530]">
-                      {label}
-                    </option>
+                    <option key={value} value={value} className="bg-[#252530]">{label}</option>
                   ))}
                 </select>
               </div>
@@ -359,9 +338,7 @@ export function CreatePlaceDialog({ open, onOpenChange, onCreated }: CreatePlace
                   className="w-full h-11 px-3 rounded-md bg-[#252530] border border-[#3a3a45] text-white focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 >
                   {Object.entries(difficultyLabels).map(([value, label]) => (
-                    <option key={value} value={value} className="bg-[#252530]">
-                      {label}
-                    </option>
+                    <option key={value} value={value} className="bg-[#252530]">{label}</option>
                   ))}
                 </select>
               </div>
@@ -380,7 +357,6 @@ export function CreatePlaceDialog({ open, onOpenChange, onCreated }: CreatePlace
               />
             </div>
 
-            {/* Error */}
             {error && (
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
                 <p className="text-sm text-red-400">{error}</p>
@@ -388,7 +364,7 @@ export function CreatePlaceDialog({ open, onOpenChange, onCreated }: CreatePlace
             )}
           </div>
 
-          {/* Submit button */}
+          {/* Submit */}
           <div className="p-5 border-t border-[#2a2a35] shrink-0">
             <div className="flex gap-3">
               <Button 
