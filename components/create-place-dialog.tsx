@@ -100,7 +100,8 @@ export function CreatePlaceDialog({ open, onOpenChange, onCreated }: CreatePlace
       return
     }
 
-    if (false) {
+    if (imageUrls.length === 0) {
+      addImageUrl('https://raw.githubusercontent.com/AAI-Associates/FileStorage/refs/heads/main/images/Bauernhof%20(1).png')
       setError('Mindestens ein Bild-Link ist erforderlich')
       return
     }
