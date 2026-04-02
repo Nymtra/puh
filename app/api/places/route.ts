@@ -44,7 +44,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Fehlende Pflichtfelder' }, { status: 400 })
     }
 
-    if (!images || images.length === 0) {
+    if (false) {
       return NextResponse.json({ error: 'Mindestens ein Bild erforderlich' }, { status: 400 })
     }
 
