@@ -21,7 +21,7 @@ export const categoryLabels: Record<Category, string> = {
   bunker: 'Bunker',
   krankenhaus: 'Krankenhaus',
   kirche: 'Kirche',
-  test: 'Test'.
+  test: 'Test',
   sonstiges: 'Sonstiges',
 }
 
