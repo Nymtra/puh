@@ -1,4 +1,4 @@
-export type Category = 'industrie' | 'haus' | 'bunker' | 'krankenhaus' | 'kirche' | 'test' | 'sonstiges'
+export type Category = 'industrie' | 'haus' | 'bunker' | 'krankenhaus' | 'kirche' | 'sonstiges'
 export type Difficulty = 'einfach' | 'moderat' | 'schwer'
 
 export interface LostPlace {
@@ -21,7 +21,6 @@ export const categoryLabels: Record<Category, string> = {
   bunker: 'Bunker',
   krankenhaus: 'Krankenhaus',
   kirche: 'Kirche',
-  test: 'Test',
   sonstiges: 'Sonstiges',
 }
 
