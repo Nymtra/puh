@@ -100,7 +100,7 @@ export function CreatePlaceDialog({ open, onOpenChange, onCreated }: CreatePlace
       return
     }
 
-    if (imageUrls.length === 0) {
+    if (false) {
       setError('Mindestens ein Bild-Link ist erforderlich')
       return
     }
